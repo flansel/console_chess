@@ -45,7 +45,7 @@ typedef struct game_state{
 void init_game(GameState*);
 void print_game(GameState*);
 STATUS parse_input(char*, SquareCoord*, SquareCoord*);
-STATUS check_legal(GameState*, SquareCoord, SquareCoord);
+STATUS check_legal(GameState*, SquareCoord, SquareCoord, char*);
 int in_check(GameState* gs, char color);
 int  set_square(GameState*, SquareCoord, int);
 int  get_square(GameState*, SquareCoord);
@@ -144,7 +144,7 @@ STATUS parse_input(char* move, SquareCoord* from, SquareCoord* to){
 	return LEGAL;
 }
 
-STATUS check_legal(GameState* gs, SquareCoord from, SquareCoord to){
+STATUS check_legal(GameState* gs, SquareCoord from, SquareCoord to, char* err){
 	int piece;
 	
 	if(!in_board(from.boardr, from.boardc) || !in_board(to.boardr, to.boardc))
@@ -317,14 +317,19 @@ int main(int argc, char** argv){
 	print_game(gs);
 
 	char current_move[10];
+	char error_msg[30];
 	SquareCoord from,to;
 	//game loop
 	
 	while(gs->result == 0){
 		scanf("%9s", current_move);
 		parse_input(current_move, &from, &to);
-		set_square(gs, to, get_square(gs, from));
-		set_square(gs, from, 0);
+		if(!check_legal(gs, from, to, error_msg)){
+			wprintf(L"Error: ILLEGAL MOVE fnd\n");
+			exit(1);
+		}
+		//set_square(gs, to, get_square(gs, from));
+		//set_square(gs, from, 0);
 		print_game(gs);
 		update_state(gs);
 	}
