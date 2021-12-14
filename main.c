@@ -5,6 +5,8 @@
 #include <string.h>
 
 #define BOARD_SIZE 8
+#define WHITE 1
+#define BLACK 0
 
 typedef enum status{ILLEGAL, LEGAL}STATUS;
 
@@ -102,8 +104,8 @@ void print_game(GameState* gs){
 		wprintf(L"\n");
 	}
 	wprintf(L"\n");
-	wprintf(L"wcheck = %d\n", in_check(gs, 1));
-	wprintf(L"bcheck = %d\n", in_check(gs, 0));
+	//wprintf(L"wcheck = %d\n", in_check(gs, 1));
+	//wprintf(L"bcheck = %d\n", in_check(gs, 0));
 }
 
 int set_square(GameState* gs, SquareCoord sc, int pv){
@@ -119,6 +121,9 @@ int get_square(GameState* gs, SquareCoord sc){
 void update_state(GameState* gs){
 	//check for mate ..
 	//check for check ..
+	gs->wcheck = in_check(gs, WHITE);
+	gs->bcheck = in_check(gs, BLACK);
+	
 	//update en passant ..
 	gs->turn = !(gs->turn);
 }
@@ -168,7 +173,7 @@ int in_check(GameState* gs, char color){
 		check_pos.boardc = kpos.boardc + knight_offsets[i][0];
 		check_pos.boardr = kpos.boardr + knight_offsets[i][1];
 		if(in_board(check_pos.boardc, check_pos.boardr))
-			wprintf(L"Knight check(%d, %d) -> %d\n", check_pos.boardr, check_pos.boardc, gs->board[check_pos.boardr][check_pos.boardc]);
+			//wprintf(L"Knight check(%d, %d) -> %d\n", check_pos.boardr, check_pos.boardc, gs->board[check_pos.boardr][check_pos.boardc]);
 			//this 2 + (-4 * color) -> -2(black knight) when king color is white and vice versa
 			if(gs->board[check_pos.boardr][check_pos.boardc] == (2 + (-4 * color)))
 				return 1;
@@ -178,7 +183,7 @@ int in_check(GameState* gs, char color){
 	//check the diagonals
 	for(row = kpos.boardr+1, col = kpos.boardc+1; in_board(row,col); ++row, ++col){
 		piece = gs->board[row][col];		
-		wprintf(L"(%d, %d) -> %d\n", row, col, piece);
+		//wprintf(L"(%d, %d) -> %d\n", row, col, piece);
 		//check for friendly piece blocking the way
 		if((piece < 0 && !color) || (piece > 0 && color))
 			break;
@@ -191,7 +196,7 @@ int in_check(GameState* gs, char color){
 	
 	for(row = kpos.boardr+1, col = kpos.boardc-1; in_board(row,col); ++row, --col){
 		piece = gs->board[row][col];
-		wprintf(L"(%d, %d) -> %d\n", row, col, piece);
+		//wprintf(L"(%d, %d) -> %d\n", row, col, piece);
 		if((piece < 0 && !color) || (piece > 0 && color))
 			break;
 		if(piece == 0)
@@ -203,7 +208,7 @@ int in_check(GameState* gs, char color){
 	
 	for(row = kpos.boardr-1, col = kpos.boardc+1; in_board(row,col); --row, ++col){
 		piece = gs->board[row][col];
-		wprintf(L"(%d, %d) -> %d\n", row, col, piece);
+		//wprintf(L"(%d, %d) -> %d\n", row, col, piece);
 		if((piece < 0 && !color) || (piece > 0 && color))
 			break;
 		if(piece == 0)
@@ -215,7 +220,7 @@ int in_check(GameState* gs, char color){
 	
 	for(row = kpos.boardr-1, col = kpos.boardc-1; in_board(row,col); --row, --col){
 		piece = gs->board[row][col];
-		wprintf(L"(%d, %d) -> %d\n", row, col, piece);
+		//wprintf(L"(%d, %d) -> %d\n", row, col, piece);
 		if((piece < 0 && !color) || (piece > 0 && color))
 			break;
 		if(piece == 0)
@@ -272,7 +277,7 @@ int in_check(GameState* gs, char color){
 	}
 
 	//check pawns seperately
-	wprintf(L"kpos -> (%d, %d)\n", kpos.boardr, kpos.boardc);
+	//wprintf(L"kpos -> (%d, %d)\n", kpos.boardr, kpos.boardc);
 	if(color){
 		if(in_board(kpos.boardr+1, kpos.boardc-1) && gs->board[kpos.boardr+1][kpos.boardc-1] == -1)
 			return 1;
