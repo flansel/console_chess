@@ -145,6 +145,21 @@ STATUS parse_input(char* move, SquareCoord* from, SquareCoord* to){
 }
 
 STATUS check_legal(GameState* gs, SquareCoord from, SquareCoord to){
+	int piece;
+	
+	if(!in_board(from.boardr, from.boardc) || !in_board(to.boardr, to.boardc))
+		return ILLEGAL;
+	
+	piece = gs->board[from.boardr][from.boardc];
+	if(piece == 0 || (piece < 0 && gs->turn) || (piece > 0 && !gs->turn))
+		return ILLEGAL;
+
+	gs->board[to.boardr][to.boardc] = piece;
+	gs->board[from.boardr][from.boardc] = 0;
+	
+	if(in_check(gs, gs->turn))
+		return ILLEGAL;
+
 	return LEGAL;
 }
 
