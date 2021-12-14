@@ -8,6 +8,13 @@
 
 typedef enum status{ILLEGAL, LEGAL}STATUS;
 
+typedef struct square_coord{
+	char rank;
+	char file;
+	char boardr;
+	char boardc;
+}SquareCoord;
+
 typedef struct game_state{
 	char wcheck;
 	char bcheck;
@@ -21,24 +28,23 @@ typedef struct game_state{
 	// if enpassant[0] != \0 then the pawn to be en passanted is store ie "a4"
 	char enpassant[3]; 
 	
+	//keep track of the kings to make certain checks easier
+	SquareCoord bking;
+	SquareCoord wking;
+
 	// 0 -> none, 1 -> pawn, 2 -> knight, 3 -> bishop, 4 -> rook. 5 -> queen, 6 -> king.
 	// Positive values indicate white, negative for Black.
 	int board[BOARD_SIZE][BOARD_SIZE];
 
 }GameState;
 
-typedef struct square_coord{
-	char rank;
-	char file;
-	char boardr;
-	char boardc;
-}SquareCoord;
 
 
 void init_game(GameState*);
 void print_game(GameState*);
 STATUS parse_input(char*, SquareCoord*, SquareCoord*);
 STATUS check_legal(GameState*, SquareCoord, SquareCoord);
+int is_check(GameState* gs, char color);
 int  set_square(GameState*, SquareCoord, int);
 int  get_square(GameState*, SquareCoord);
 void update_state(GameState*);
@@ -58,6 +64,17 @@ void init_game(GameState* gs){
 	gs->result = 0;
 	gs->turn = 1;
 	gs->enpassant[0] = '\0';
+
+	//set king positions
+	gs->wking.rank = 1;
+	gs->wking.file = 'e';
+	gs->wking.boardc = 4;
+	gs->wking.boardr = 0;
+
+	gs->bking.rank = 8;
+	gs->bking.file = 'e';
+	gs->bking.boardc = 4;
+	gs->bking.boardr = 7;
 	
 	//set the ranks with pieces
 	memcpy(gs->board[0], first_rank, sizeof first_rank);
@@ -124,6 +141,19 @@ STATUS parse_input(char* move, SquareCoord* from, SquareCoord* to){
 
 STATUS check_legal(GameState* gs, SquareCoord from, SquareCoord to){
 	return LEGAL;
+}
+
+int in_check(Gamestate* gs, char color){
+	
+	//check for knights
+	
+	//check the diagonals
+	
+	//check the rank
+	
+	//check the file
+		
+	return 0;
 }
 
 int main(int argc, char** argv){
