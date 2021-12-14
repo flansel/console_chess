@@ -310,7 +310,7 @@ int in_check(GameState* gs, char color){
 
 int main(int argc, char** argv){
 	char *locale;
-    locale = setlocale(LC_ALL, "");
+	locale = setlocale(LC_ALL, "");
 
 	GameState* gs = (GameState*)malloc(sizeof(GameState));
 	init_game(gs);
