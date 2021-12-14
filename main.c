@@ -5,7 +5,34 @@
 #include <string.h>
 #include "chess_utils.h"
 
+STATUS parse_input(char*, SquareCoord*, SquareCoord*);
+
 STATUS parse_input(char* move, SquareCoord* from, SquareCoord* to){
+	int i;
+	Move current_move;
+	
+	//fall-throughs are used for upper and lower in all cases except Bishop and pawns
+	switch(move[0]){
+		case 'B':
+			break;
+		case 'n':
+		case 'N':
+			break;
+		case 'k':
+		case 'K':
+			break;
+		case 'q':
+		case 'Q':
+			break;
+		case 'r':
+		case 'R':
+			break;
+		default:
+			break;
+
+	}
+	
+	//Old method "e2e4 -> move from : e2, to : e4"	
 	from->file = move[0];
 	from->rank = move[1];
 	from->boardc = from->file - 'a';

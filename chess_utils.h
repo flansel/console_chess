@@ -48,7 +48,6 @@ typedef struct game_state{
 
 void init_game(GameState*);
 void print_game(GameState*);
-STATUS parse_input(char*, SquareCoord*, SquareCoord*);
 STATUS check_legal(GameState*, SquareCoord, SquareCoord, char*);
 int in_check(GameState* gs, char color);
 int  set_square(GameState*, SquareCoord, int);
