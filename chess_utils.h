@@ -12,6 +12,16 @@ typedef struct square_coord{
     char boardc;
 }SquareCoord;
 
+typedef struct move{
+	//"nxe4 ..."
+	char algnot[10];
+	SquareCoord from;
+	SquareCoord to;
+	int piece;
+ 	//normal, capture, en passant
+	int move_type;
+}Move;
+
 typedef struct game_state{
     char wcheck;
     char bcheck;
