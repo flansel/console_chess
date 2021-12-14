@@ -195,6 +195,7 @@ int in_check(GameState* gs, char color){
 		if((piece < 0 && !color) || (piece > 0 && color))
 			break;
 		if(piece == 0)
+			continue;
 		piece = abs(piece);
 		if(piece == 5 || piece == 3)
 			return 1;
