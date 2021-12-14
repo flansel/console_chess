@@ -219,6 +219,8 @@ int in_check(GameState* gs, char color){
 		piece = abs(piece);
 		if(piece == 5 || piece == 3)
 			return 1;
+		else
+			break;
 	}
 	
 	for(row = kpos.boardr-1, col = kpos.boardc+1; in_board(row,col); --row, ++col){
@@ -231,6 +233,8 @@ int in_check(GameState* gs, char color){
 		piece = abs(piece);
 		if(piece == 5 || piece == 3)
 			return 1;
+		else
+			break;
 	}
 	
 	for(row = kpos.boardr-1, col = kpos.boardc-1; in_board(row,col); --row, --col){
@@ -243,6 +247,8 @@ int in_check(GameState* gs, char color){
 		piece = abs(piece);
 		if(piece == 5 || piece == 3)
 			return 1;
+		else
+			break;
 	}
 	
 	//check the rank
@@ -255,6 +261,8 @@ int in_check(GameState* gs, char color){
 		piece = abs(piece);
 		if(piece == 5 || piece == 4)
 			return 1;
+		else
+			break;
 	}
 
 	for(row = kpos.boardr, col = kpos.boardc-1; in_board(row,col); --col){
@@ -266,6 +274,8 @@ int in_check(GameState* gs, char color){
 		piece = abs(piece);
 		if(piece == 5 || piece == 4)
 			return 1;
+		else
+			break;
 	}
 	
 	//check the file
@@ -278,6 +288,8 @@ int in_check(GameState* gs, char color){
 		piece = abs(piece);
 		if(piece == 5 || piece == 4)
 			return 1;
+		else
+			break;
 	}
 
 	for(row = kpos.boardr-1, col = kpos.boardc; in_board(row,col); --row){
@@ -289,6 +301,8 @@ int in_check(GameState* gs, char color){
 		piece = abs(piece);
 		if(piece == 5 || piece == 4)
 			return 1;
+		else
+			break;
 	}
 
 	//check pawns seperately
