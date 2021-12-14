@@ -207,6 +207,8 @@ int in_check(GameState* gs, char color){
 		piece = abs(piece);
 		if(piece == 5 || piece == 3)
 			return 1;
+		else
+			break;
 	}
 	
 	for(row = kpos.boardr+1, col = kpos.boardc-1; in_board(row,col); ++row, --col){
