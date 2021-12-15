@@ -66,4 +66,5 @@ void print_game_state(GameState*);
 int check_line(GameState*, SquareCoord, int, int, int, SquareCoordList*);
 int check_square(GameState*, int, int, int, SquareCoordList*);
 void alg_to_coord(SquareCoord*);
+int is_square_attacked_color(GameState*, SquareCoord, char);
 #endif

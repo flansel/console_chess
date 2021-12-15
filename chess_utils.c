@@ -102,6 +102,14 @@ STATUS check_legal(GameState* gs, SquareCoord from, SquareCoord to, char* err){
 	gs->board[to.boardr][to.boardc] = piece;
 	gs->board[from.boardr][from.boardc] = 0;
 	
+	if(piece == W_KING){
+		gs->wking.boardr = to.boardr;
+		gs->wking.boardc = to.boardc;
+	}else if(piece == B_KING){
+		gs->bking.boardr = to.boardr;
+		gs->bking.boardc = to.boardc;
+	}
+		
 	if(in_check(gs, gs->turn))
 		return ILLEGAL;
 
@@ -251,8 +259,23 @@ int in_check(GameState* gs, char color){
 		pc = 1;
 	}
 
-	for(i = 1; i < 6; ++i){
+	for(i = 1; i < 7; ++i){
 		if(is_square_attacked(gs, kpos, i*pc, NULL))
+			return 1;
+	}
+
+	return 0;
+}
+
+int is_square_attacked_color(GameState* gs, SquareCoord tg, char color){
+	int i,pc;
+	if(color == WHITE)
+		pc = 1;
+	else if(color == BLACK)
+		pc = -1;
+
+	for(i = 1; i < 7; ++i){
+		if(is_square_attacked(gs, tg, i*pc, NULL))
 			return 1;
 	}
 
@@ -264,6 +287,6 @@ void print_game_state(GameState* gs){
 }
 
 void alg_to_coord(SquareCoord* c){
-	c->boardr = c->rank - '0' -1;
+	c->boardr = c->rank - '0' - 1;
 	c->boardc = c->file - 'a';
 }
