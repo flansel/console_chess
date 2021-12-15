@@ -89,17 +89,19 @@ void update_state(GameState* gs){
 
 STATUS check_legal(GameState* gs, SquareCoord from, SquareCoord to, char* err){
 	int piece;
-
+	
 	if(!in_board(from.boardr, from.boardc) || !in_board(to.boardr, to.boardc))
 		return ILLEGAL;
-
+	
 	piece = gs->board[from.boardr][from.boardc];
+	//wprintf(L"(%d, %d)=%d -> (%d,%d)\n", from.boardr, from.boardc, piece, to.boardr, to.boardc);
+
 	if(piece == 0 || (piece < 0 && gs->turn) || (piece > 0 && !gs->turn))
 		return ILLEGAL;
 
 	gs->board[to.boardr][to.boardc] = piece;
 	gs->board[from.boardr][from.boardc] = 0;
-
+	
 	if(in_check(gs, gs->turn))
 		return ILLEGAL;
 
@@ -135,7 +137,7 @@ int check_line(GameState* gs, SquareCoord st, int pc, int rowf, int colf, Square
 		}else if(piece == pc){
 			if(loco){
 				loco->boardr = row;
-				loco->boardr = col;
+				loco->boardc = col;
 			}
 			return 1;
 		}

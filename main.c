@@ -84,11 +84,11 @@ int main(int argc, char** argv){
 	while(gs->result == 0){
 		scanf("%9s", current_move);
 		if(!parse_input(gs, current_move, &from, &to)){
-			wprintf(L"Error: ILLEGAL MOVE fnd\n");
+			wprintf(L"Error: ILLEGAL MOVE fnd, in move parser\n");
 			exit(1);
 		}
 		if(!check_legal(gs, from, to, error_msg)){
-			wprintf(L"Error: ILLEGAL MOVE fnd\n");
+			wprintf(L"Error: ILLEGAL MOVE fnd, in Legality check\n");
 			exit(1);
 		}
 		//set_square(gs, to, get_square(gs, from));
