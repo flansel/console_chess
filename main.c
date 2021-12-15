@@ -6,9 +6,14 @@
 #include "chess_utils.h"
 
 STATUS parse_input(GameState*, char*, SquareCoord*, SquareCoord*);
+void debug(int);
+
+void debug(int n){
+	wprintf(L"Debug bp=%d\n", n);
+}
 
 STATUS parse_input(GameState* gs, char* move, SquareCoord* from, SquareCoord* to){
-	int i, len, pc;
+	int i, len, pc, ret=-1;
 	Move current_move;
 	SquareCoordList* possible_moves = (SquareCoordList*)malloc(sizeof(SquareCoordList));
 	possible_moves->size = 0;
@@ -27,60 +32,98 @@ STATUS parse_input(GameState* gs, char* move, SquareCoord* from, SquareCoord* to
 	switch(move[0]){
 		case 'B':
 			if(!is_square_attacked(gs, *to, BISHOP * pc, possible_moves))
-				return ILLEGAL;
+				ret = ILLEGAL;
 			break;
 		case 'n':
 		case 'N':
 			if(!is_square_attacked(gs, *to, KNIGHT * pc, possible_moves))
-				return ILLEGAL;
+				ret = ILLEGAL;
 			break;
 		case 'k':
 		case 'K':
 			if(!is_square_attacked(gs, *to, KING * pc, possible_moves))
-				return ILLEGAL;
+				ret = ILLEGAL;
 			break;
 		case 'q':
 		case 'Q':
 			if(!is_square_attacked(gs, *to, QUEEN * pc, possible_moves))
-				return ILLEGAL;
+				ret = ILLEGAL;
 			break;
 		case 'r':
 		case 'R':
 			if(!is_square_attacked(gs, *to, ROOK * pc, possible_moves))
-				return ILLEGAL;
+				ret = ILLEGAL;
 			break;
 		default:
 			if(move[1] == 'x'){
 				if(!is_square_attacked(gs, *to, PAWN * pc, possible_moves)){
-					return ILLEGAL;
+					ret = ILLEGAL;
+					break;
 				}
 				for(i = 0; i < possible_moves->size; i++){
 					if(possible_moves->list[i].boardc + 'a' == move[0]){
 						from->boardr = possible_moves->list[i].boardr;
 						from->boardc = possible_moves->list[i].boardc;
-						free(possible_moves);
-						return LEGAL;
+						ret = LEGAL;
+						break;
 					}
 				}
+				ret = ILLEGAL;
 			}else if(gs->board[to->boardr + (pc * -1)][to->boardc] == PAWN * pc){
-				from->boardr = to->boardr+(pc * -1);
+				from->boardr = to->boardr + (pc * -1);
 				from->boardc = to->boardc;
+				ret = LEGAL;
 			}else if(gs->board[to->boardr + (pc * -2)][to->boardc] == PAWN * pc){
+				if(!(move[1] == '4' && pc == 1) && !(move[1] == '5' && pc == -1)){
+					ret = ILLEGAL;
+				}
 				from->boardr = to->boardr + (pc * -2);
 				from->boardc = to->boardc;
+				ret = LEGAL;
 			}else{
-				return ILLEGAL;
+				ret = ILLEGAL;
 			}
 			break;
-
 	}
-	if(possible_moves->size == 1){
+	
+	if(ret != -1){
+		free(possible_moves);
+		return ret;
+	}
+	
+	debug(12345);
+
+	if(possible_moves->size == 1 && (len < 4 || move[1] == 'x')){
 		from->boardr = possible_moves->list[0].boardr;
 		from->boardc = possible_moves->list[0].boardc;
+		ret = LEGAL;
+	}else if(move[1] > '0' && move[1] < '9'){
+		for(i = 0; i < possible_moves->size; ++i){
+			if(possible_moves->list[i].boardr == (move[1] - '1')){
+				from->boardr = possible_moves->list[i].boardr;
+				from->boardc = possible_moves->list[i].boardc;
+				ret = LEGAL;
+				break;
+			}
+		}
+	}else if(move[1] >= 'a' && move[1] <= 'h'){
+		for(i = 0; i < possible_moves->size; ++i){
+			if(possible_moves->list[i].boardc == (move[1] - 'a')){
+				from->boardr = possible_moves->list[i].boardr;
+				from->boardc = possible_moves->list[i].boardc;
+				ret = LEGAL;
+				break;
+			}
+		}
 	}
+	
+	if(ret == -1){
+		ret = ILLEGAL;
+	}
+
 	free(possible_moves);
 
-	return LEGAL;
+	return ret;
 }
 
 int main(int argc, char** argv){
