@@ -73,7 +73,7 @@ int set_square(GameState* gs, SquareCoord sc, int pv){
 }
 
 int get_square(GameState* gs, SquareCoord sc){
-	printf("%d %d", sc.rank, sc.file);
+	//printf("%d %d", sc.rank, sc.file);
 	return gs->board[sc.boardr][sc.boardc];
 }
 
@@ -140,7 +140,7 @@ int check_line(GameState* gs, SquareCoord st, int pc, int rowf, int colf, Square
 			return 1;
 		}
 	}
-return 0;
+	return 0;
 }
 
 int check_square(GameState* gs, int row, int col, int pc, SquareCoord* loco){
