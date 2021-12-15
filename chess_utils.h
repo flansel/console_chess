@@ -49,10 +49,12 @@ typedef struct game_state{
 void init_game(GameState*);
 void print_game(GameState*);
 STATUS check_legal(GameState*, SquareCoord, SquareCoord, char*);
+int is_square_attacked(GameState*, SquareCoord, int, SquareCoord*);
 int in_check(GameState* gs, char color);
 int  set_square(GameState*, SquareCoord, int);
 int  get_square(GameState*, SquareCoord);
 void update_state(GameState*);
 int in_board(int,int);
+void print_game_state(GameState*);
 
 #endif

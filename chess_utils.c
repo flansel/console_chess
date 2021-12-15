@@ -7,6 +7,9 @@
 #define WHITE 1
 #define BLACK 0
 
+enum pieces{B_KING=-6, B_QUEEN, B_ROOK, B_BISHOP, B_KNIGHT, B_PAWN, NONE,
+	   		W_PAWN, W_KNIGHT, W_BISHOP, W_ROOK, W_QUEEN, W_KING};
+
 /*
  * Initialize a starting board, and other GameState variables
  */
@@ -110,6 +113,125 @@ int in_board(int row, int col){
     if(row >= 0 && row < 8 && col >= 0 && col < 8)
            return 1;
     return 0;
+}
+
+/*
+ * GameState, targeted square, piece type to check for, color that is attacking, optional loco
+ * that is filled with the position of the attacking piece
+ * 
+ * check_line & check_square are helper fns to check a square, row, col, or diagonal
+ * 
+ * eg of is_square_attacked:
+ *
+ * is_s_a(gs,tg,2,NULL) -> is a white knight attacking square tg in game gs, dont bother given me 
+ * the coords
+ */
+int check_line(GameState* gs, SquareCoord st, int pc, int rowf, int colf, SquareCoord* loco){
+    int row, col, piece;
+	for(row = st.boardr+rowf, col = st.boardc+colf; in_board(row,col); row+=rowf, col+=colf){
+        piece = gs->board[row][col];
+        if(piece != 0 && piece != pc)
+            return 0;
+		else if(piece == pc){
+			if(loco){
+				loco->boardr = row;
+				loco->boardr = col;
+			}
+			return 1;
+		}
+    }
+	return 0;
+}
+
+int check_square(GameState* gs, int row, int col, int pc, SquareCoord* loco){
+	if(in_board(row, col) && gs->board[row][col] == pc){
+		if(loco){
+			loco->boardr = row;
+			loco->boardc = col;
+		}
+		return 1;
+	}
+	return 0;
+}
+
+int is_square_attacked(GameState* gs, SquareCoord tg, int pc, SquareCoord* loco){
+	int i, row, col, ptype;
+	SquareCoord check_pos;
+
+	ptype = abs(pc);
+
+	switch(ptype){
+		//check for knights
+		case 2:
+			for(i = 0; i < 8; ++i){
+        		check_pos.boardc = tg.boardc + knight_offsets[i][0];
+        		check_pos.boardr = tg.boardr + knight_offsets[i][1];
+        		if(in_board(check_pos.boardc, check_pos.boardr)){
+            		if(gs->board[check_pos.boardr][check_pos.boardc] == pc){
+                		if(loco){
+							loco->boardr = check_pos.boardr;
+							loco->boardc = check_pos.boardc;
+						}
+						return 1;
+					}
+				}
+    		}
+			break;
+		case 4:
+		case 5:
+			if(check_line(gs, tg, pc, 0, 1, loco))
+				return 1;
+			if(check_line(gs, tg, pc, 0, -1, loco))
+				return 1;
+			if(check_line(gs, tg, pc, 1, 0, loco))
+				return 1;
+			if(check_line(gs, tg, pc, -1, 0, loco))
+				return 1;
+			if(ptype == 4)
+				break;
+		case 3:
+			if(check_line(gs, tg, pc, 1, 1, loco))
+				return 1;
+			else if(check_line(gs, tg, pc, 1, -1, loco))
+				return 1;
+			else if(check_line(gs, tg, pc, -1, 1, loco))
+				return 1;
+			else if(check_line(gs, tg, pc, -1, -1, loco))
+				return 1;
+			break;
+		case 6:
+			row = tg.boardr;
+			col = tg.boardc;
+			if(check_square(gs, row+1, col, pc, loco))
+				return 1;
+			if(check_square(gs, row-1, col, pc, loco))
+				return 1;
+			if(check_square(gs, row, col+1, pc, loco))
+				return 1;
+			if(check_square(gs, row, col-1, pc, loco))
+				return 1;
+		case 1:
+			row = tg.boardr;
+			col = tg.boardc;
+			if(pc != -1){
+				if(check_square(gs, row-1, col-1, pc, loco))
+					return 1;
+				if(check_square(gs, row-1, col+1, pc, loco))
+					return 1;
+			}
+			if(pc != 1){
+				if(check_square(gs, row+1, col-1, pc, loco))
+					return 1;
+				if(check_square(gs, row+1, col+1, pc, loco))
+					return 1;
+			}
+			break;
+		default:
+			break;
+
+	}
+	
+	return 0;
 }
 
 int in_check(GameState* gs, char color){
@@ -264,3 +386,6 @@ int in_check(GameState* gs, char color){
     return 0;
 }
 
+void print_game_state(GameState* gs){
+	wprintf(L"W_CHECK= %d\nB_CHECK= %d\n", gs->wcheck, gs->bcheck);
+}
