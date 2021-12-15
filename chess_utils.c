@@ -239,11 +239,9 @@ int in_check(GameState* gs, char color){
 	int i,pc;
 
 	if(color == WHITE){
-		wprintf(L"Checking for White king\n");
 		kpos = gs->wking;
 		pc = -1;
 	}else if(color == BLACK){
-		wprintf(L"Checking for Black king\n");
 		kpos = gs->bking;
 		pc = 1;
 	}

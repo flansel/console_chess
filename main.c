@@ -48,23 +48,22 @@ STATUS parse_input(GameState* gs, char* move, SquareCoord* from, SquareCoord* to
 				return ILLEGAL;
 			break;
 		default:
-			return ILLEGAL;
+			if(move[1] == 'x'){
+				if(!is_square_attacked(gs, *to, PAWN * pc, from)){
+					return ILLEGAL;
+				}
+			}else if(gs->board[to->boardr + (pc * -1)][to->boardc] == PAWN * pc){
+				from->boardr = to->boardr+(pc * -1);
+				from->boardc = to->boardc;
+			}else if(gs->board[to->boardr + (pc * -2)][to->boardc] == PAWN * pc){
+				from->boardr = to->boardr + (pc * -2);
+				from->boardc = to->boardc;
+			}else{
+				return ILLEGAL;
+			}
 			break;
 
 	}
-	
-	//Old method "e2e4 -> move from : e2, to : e4"	
-	/*from->file = move[0];
-	from->rank = move[1];
-	from->boardc = from->file - 'a';
-	from->boardr = (from->rank - '0') -1;
-
-	to->file = move[2];
-	to->rank = move[3];
-	to->boardc = to->file - 'a';
-	to->boardr = (to->rank - '0') -1;
-	*/
-	//wprintf(L"IN: %s -> From %d %d ... To %d %d\n", move, from->file, from->rank, to->file, to->rank);
 	
 	return LEGAL;
 }
