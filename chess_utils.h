@@ -5,6 +5,8 @@
 
 typedef enum status{ILLEGAL, LEGAL}STATUS;
 
+enum abs_pieces{PAWN=1, KNIGHT, BISHOP, ROOK, QUEEN, KING};
+
 typedef struct square_coord{
 	char rank;
 	char file;
@@ -58,4 +60,5 @@ int in_board(int,int);
 void print_game_state(GameState*);
 int check_line(GameState*, SquareCoord, int, int, int, SquareCoord*);
 int check_square(GameState*, int, int, int, SquareCoord*);
+void alg_to_coord(SquareCoord*);
 #endif

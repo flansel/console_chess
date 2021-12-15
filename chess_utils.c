@@ -259,3 +259,8 @@ int in_check(GameState* gs, char color){
 void print_game_state(GameState* gs){
 	wprintf(L"W_CHECK= %d\nB_CHECK= %d\n", gs->wcheck, gs->bcheck);
 }
+
+void alg_to_coord(SquareCoord* c){
+	c->boardr = c->rank - '0' -1;
+	c->boardc = c->file - 'a';
+}
