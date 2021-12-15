@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <locale.h>
 #include <string.h>
+
 #include "chess_utils.h"
 
 STATUS parse_input(GameState*, char*, SquareCoord*, SquareCoord*);
@@ -91,7 +92,7 @@ STATUS parse_input(GameState* gs, char* move, SquareCoord* from, SquareCoord* to
 		return ret;
 	}
 	
-	debug(12345);
+	//debug(12345);
 
 	if(possible_moves->size == 1 && (len < 4 || move[1] == 'x')){
 		from->boardr = possible_moves->list[0].boardr;
@@ -152,8 +153,9 @@ int main(int argc, char** argv){
 		//set_square(gs, to, get_square(gs, from));
 		//set_square(gs, from, 0);
 		update_state(gs);
+		system("clear");
 		print_game(gs);
-		print_game_state(gs);
+		//print_game_state(gs);
 
 	}
 	
