@@ -70,9 +70,10 @@ int main(int argc, char** argv){
 		}
 		//set_square(gs, to, get_square(gs, from));
 		//set_square(gs, from, 0);
+		update_state(gs);
 		print_game(gs);
 		print_game_state(gs);
-		update_state(gs);
+
 	}
 	
 	free(gs);	

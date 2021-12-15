@@ -167,7 +167,7 @@ int is_square_attacked(GameState* gs, SquareCoord tg, int pc, SquareCoord* loco)
         		check_pos.boardc = tg.boardc + knight_offsets[i][0];
         		check_pos.boardr = tg.boardr + knight_offsets[i][1];
         		if(in_board(check_pos.boardc, check_pos.boardr)){
-            		if(gs->board[check_pos.boardr][check_pos.boardc] == pc){
+					if(gs->board[check_pos.boardr][check_pos.boardc] == pc){
                 		if(loco){
 							loco->boardr = check_pos.boardr;
 							loco->boardc = check_pos.boardc;
@@ -235,154 +235,24 @@ int is_square_attacked(GameState* gs, SquareCoord tg, int pc, SquareCoord* loco)
 }
 
 int in_check(GameState* gs, char color){
-    int i, row, col, piece;
     SquareCoord kpos;
-    SquareCoord check_pos;
+	int i,pc;
 
-    if(color){
+    if(color == WHITE){
+		wprintf(L"Checking for White king\n");
         kpos = gs->wking;
-    }else{
+		pc = -1;
+	}else if(color == BLACK){
+		wprintf(L"Checking for Black king\n");
         kpos = gs->bking;
+		pc = 1;
     }
-
-    //check for knights
-    for(i = 0; i < 8; ++i){
-        check_pos.boardc = kpos.boardc + knight_offsets[i][0];
-        check_pos.boardr = kpos.boardr + knight_offsets[i][1];
-        if(in_board(check_pos.boardc, check_pos.boardr))
-            //wprintf(L"Knight check(%d, %d) -> %d\n", check_pos.boardr, check_pos.boardc, gs->board[check_pos.boardr][check_pos.boardc]);
-            //this 2 + (-4 * color) -> -2(black knight) when king color is white and vice versa
-            if(gs->board[check_pos.boardr][check_pos.boardc] == (2 + (-4 * color)))
-                return 1;
-    }
-
-
-    //check the diagonals
-    for(row = kpos.boardr+1, col = kpos.boardc+1; in_board(row,col); ++row, ++col){
-        piece = gs->board[row][col];
-        //wprintf(L"(%d, %d) -> %d\n", row, col, piece);
-        //check for friendly piece blocking the way
-        if((piece < 0 && !color) || (piece > 0 && color))
-            break;
-        if(piece == 0)
-            continue;
-        piece = abs(piece);
-        if(piece == 5 || piece == 3)
-            return 1;
-        else
-            break;
-    }
-
-    for(row = kpos.boardr+1, col = kpos.boardc-1; in_board(row,col); ++row, --col){
-        piece = gs->board[row][col];
-        //wprintf(L"(%d, %d) -> %d\n", row, col, piece);
-        if((piece < 0 && !color) || (piece > 0 && color))
-            break;
-        if(piece == 0)
-            continue;
-        piece = abs(piece);
-        if(piece == 5 || piece == 3)
-            return 1;
-        else
-            break;
-    }
-
-    for(row = kpos.boardr-1, col = kpos.boardc+1; in_board(row,col); --row, ++col){
-        piece = gs->board[row][col];
-        //wprintf(L"(%d, %d) -> %d\n", row, col, piece);
-        if((piece < 0 && !color) || (piece > 0 && color))
-            break;
-        if(piece == 0)
-            continue;
-        piece = abs(piece);
-        if(piece == 5 || piece == 3)
-            return 1;
-        else
-            break;
-    }
-
-    for(row = kpos.boardr-1, col = kpos.boardc-1; in_board(row,col); --row, --col){
-        piece = gs->board[row][col];
-        //wprintf(L"(%d, %d) -> %d\n", row, col, piece);
-        if((piece < 0 && !color) || (piece > 0 && color))
-            break;
-        if(piece == 0)
-            continue;
-        piece = abs(piece);
-        if(piece == 5 || piece == 3)
-            return 1;
-        else
-            break;
-    }
-
-    //check the rank
-    for(row = kpos.boardr, col = kpos.boardc+1; in_board(row,col); ++col){
-        piece = gs->board[row][col];
-        if((piece < 0 && !color) || (piece > 0 && color))
-            break;
-        if(piece == 0)
-            continue;
-        piece = abs(piece);
-        if(piece == 5 || piece == 4)
-            return 1;
-        else
-            break;
-    }
-
-    for(row = kpos.boardr, col = kpos.boardc-1; in_board(row,col); --col){
-        piece = gs->board[row][col];
-        if((piece < 0 && !color) || (piece > 0 && color))
-            break;
-        if(piece == 0)
-            continue;
-        piece = abs(piece);
-        if(piece == 5 || piece == 4)
-            return 1;
-        else
-            break;
-    }
-
-    //check the file
-    for(row = kpos.boardr+1, col = kpos.boardc; in_board(row,col); ++row){
-        piece = gs->board[row][col];
-        if((piece < 0 && !color) || (piece > 0 && color))
-            break;
-        if(piece == 0)
-            continue;
-        piece = abs(piece);
-        if(piece == 5 || piece == 4)
-            return 1;
-        else
-            break;
-    }
-
-    for(row = kpos.boardr-1, col = kpos.boardc; in_board(row,col); --row){
-        piece = gs->board[row][col];
-        if((piece < 0 && !color) || (piece > 0 && color))
-            break;
-        if(piece == 0)
-            continue;
-        piece = abs(piece);
-        if(piece == 5 || piece == 4)
-            return 1;
-        else
-            break;
-    }
-
-    //check pawns seperately
-    //wprintf(L"kpos -> (%d, %d)\n", kpos.boardr, kpos.boardc);
-    if(color){
-        if(in_board(kpos.boardr+1, kpos.boardc-1) && gs->board[kpos.boardr+1][kpos.boardc-1] == -1)
-            return 1;
-        if(in_board(kpos.boardr+1, kpos.boardc+1) && gs->board[kpos.boardr+1][kpos.boardc+1] == -1)
-            return 1;
-    }else{
-        if(in_board(kpos.boardr-1, kpos.boardc-1) && gs->board[kpos.boardr-1][kpos.boardc-1] == 1)
-            return 1;
-        if(in_board(kpos.boardr-1, kpos.boardc+1) && gs->board[kpos.boardr-1][kpos.boardc+1] == 1)
-            return 1;
-    }
-
+	
+	for(i = 1; i < 6; ++i){
+		if(is_square_attacked(gs, kpos, i*pc, NULL))
+			return 1;
+	}
+ 
     return 0;
 }
 
