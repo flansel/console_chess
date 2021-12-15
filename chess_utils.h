@@ -14,6 +14,11 @@ typedef struct square_coord{
 	char boardc;
 }SquareCoord;
 
+typedef struct square_coord_list{
+	int size;
+	SquareCoord list[8];
+}SquareCoordList;
+
 typedef struct move{
 	//"nxe4 ..."
 	char algnot[10];
@@ -51,14 +56,14 @@ typedef struct game_state{
 void init_game(GameState*);
 void print_game(GameState*);
 STATUS check_legal(GameState*, SquareCoord, SquareCoord, char*);
-int is_square_attacked(GameState*, SquareCoord, int, SquareCoord*);
+int is_square_attacked(GameState*, SquareCoord, int, SquareCoordList*);
 int in_check(GameState* gs, char color);
 int  set_square(GameState*, SquareCoord, int);
 int  get_square(GameState*, SquareCoord);
 void update_state(GameState*);
 int in_board(int,int);
 void print_game_state(GameState*);
-int check_line(GameState*, SquareCoord, int, int, int, SquareCoord*);
-int check_square(GameState*, int, int, int, SquareCoord*);
+int check_line(GameState*, SquareCoord, int, int, int, SquareCoordList*);
+int check_square(GameState*, int, int, int, SquareCoordList*);
 void alg_to_coord(SquareCoord*);
 #endif

@@ -128,7 +128,7 @@ int in_board(int row, int col){
  * is_s_a(gs,tg,2,NULL) -> is a white knight attacking square tg in game gs, dont bother given me 
  * the coords
  */
-int check_line(GameState* gs, SquareCoord st, int pc, int rowf, int colf, SquareCoord* loco){
+int check_line(GameState* gs, SquareCoord st, int pc, int rowf, int colf, SquareCoordList* loco){
 	int row, col, piece;
 	for(row = st.boardr+rowf, col = st.boardc+colf; in_board(row,col); row+=rowf, col+=colf){
 		piece = gs->board[row][col];
@@ -136,8 +136,9 @@ int check_line(GameState* gs, SquareCoord st, int pc, int rowf, int colf, Square
 			return 0;
 		}else if(piece == pc){
 			if(loco){
-				loco->boardr = row;
-				loco->boardc = col;
+				loco->list[loco->size].boardr = row;
+				loco->list[loco->size].boardc = col;
+				loco->size++;		
 			}
 			return 1;
 		}
@@ -145,19 +146,20 @@ int check_line(GameState* gs, SquareCoord st, int pc, int rowf, int colf, Square
 	return 0;
 }
 
-int check_square(GameState* gs, int row, int col, int pc, SquareCoord* loco){
+int check_square(GameState* gs, int row, int col, int pc, SquareCoordList* loco){
 	if(in_board(row, col) && gs->board[row][col] == pc){
 		if(loco){
-			loco->boardr = row;
-			loco->boardc = col;
+			loco->list[loco->size].boardr = row;
+			loco->list[loco->size].boardc = col;
+			loco->size++;
 		}
 		return 1;
 	}
 	return 0;
 }
 
-int is_square_attacked(GameState* gs, SquareCoord tg, int pc, SquareCoord* loco){
-	int i, row, col, ptype;
+int is_square_attacked(GameState* gs, SquareCoord tg, int pc, SquareCoordList* loco){
+	int i, row, col, ptype, found=0;
 	SquareCoord check_pos;
 
 	ptype = abs(pc);
@@ -171,10 +173,11 @@ int is_square_attacked(GameState* gs, SquareCoord tg, int pc, SquareCoord* loco)
 				if(in_board(check_pos.boardc, check_pos.boardr)){
 					if(gs->board[check_pos.boardr][check_pos.boardc] == pc){
 						if(loco){
-							loco->boardr = check_pos.boardr;
-							loco->boardc = check_pos.boardc;
+							loco->list[loco->size].boardr = check_pos.boardr;
+							loco->list[loco->size].boardc = check_pos.boardc;
+							loco->size++;
 						}
-						return 1;
+						found = 1;
 					}
 				}
 			}
@@ -182,50 +185,50 @@ int is_square_attacked(GameState* gs, SquareCoord tg, int pc, SquareCoord* loco)
 		case 4:
 		case 5:
 			if(check_line(gs, tg, pc, 0, 1, loco))
-				return 1;
+				found = 1;
 			if(check_line(gs, tg, pc, 0, -1, loco))
-				return 1;
+				found = 1;
 			if(check_line(gs, tg, pc, 1, 0, loco))
-				return 1;
+				found = 1;
 			if(check_line(gs, tg, pc, -1, 0, loco))
-				return 1;
+				found = 1;
 			if(ptype == 4)
 				break;
 		case 3:
 			if(check_line(gs, tg, pc, 1, 1, loco))
-				return 1;
+				found = 1;
 			else if(check_line(gs, tg, pc, 1, -1, loco))
-				return 1;
+				found = 1;
 			else if(check_line(gs, tg, pc, -1, 1, loco))
-				return 1;
+				found = 1;
 			else if(check_line(gs, tg, pc, -1, -1, loco))
-				return 1;
+				found = 1;
 			break;
 		case 6:
 			row = tg.boardr;
 			col = tg.boardc;
 			if(check_square(gs, row+1, col, pc, loco))
-				return 1;
+				found = 1;
 			if(check_square(gs, row-1, col, pc, loco))
-				return 1;
+				found = 1;
 			if(check_square(gs, row, col+1, pc, loco))
-				return 1;
+				found = 1;
 			if(check_square(gs, row, col-1, pc, loco))
-				return 1;
+				found = 1;
 		case 1:
 			row = tg.boardr;
 			col = tg.boardc;
 			if(pc != -1){
 				if(check_square(gs, row-1, col-1, pc, loco))
-					return 1;
+					found = 1;
 				if(check_square(gs, row-1, col+1, pc, loco))
-					return 1;
+					found = 1;
 			}
 			if(pc != 1){
 				if(check_square(gs, row+1, col-1, pc, loco))
-					return 1;
+					found = 1;
 				if(check_square(gs, row+1, col+1, pc, loco))
-					return 1;
+					found = 1;
 			}
 			break;
 		default:
@@ -233,7 +236,7 @@ int is_square_attacked(GameState* gs, SquareCoord tg, int pc, SquareCoord* loco)
 
 	}
 	
-	return 0;
+	return found;
 }
 
 int in_check(GameState* gs, char color){

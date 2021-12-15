@@ -10,6 +10,8 @@ STATUS parse_input(GameState*, char*, SquareCoord*, SquareCoord*);
 STATUS parse_input(GameState* gs, char* move, SquareCoord* from, SquareCoord* to){
 	int i, len, pc;
 	Move current_move;
+	SquareCoordList* possible_moves = (SquareCoordList*)malloc(sizeof(SquareCoordList));
+	possible_moves->size = 0;
 
 	len = strlen(move);
 	to->rank = move[len-1];
@@ -24,32 +26,32 @@ STATUS parse_input(GameState* gs, char* move, SquareCoord* from, SquareCoord* to
 	//fall-throughs are used for upper and lower in all cases except Bishop and pawns
 	switch(move[0]){
 		case 'B':
-			if(!is_square_attacked(gs, *to, BISHOP * pc, from))
+			if(!is_square_attacked(gs, *to, BISHOP * pc, possible_moves))
 				return ILLEGAL;
 			break;
 		case 'n':
 		case 'N':
-			if(!is_square_attacked(gs, *to, KNIGHT * pc, from))
+			if(!is_square_attacked(gs, *to, KNIGHT * pc, possible_moves))
 				return ILLEGAL;
 			break;
 		case 'k':
 		case 'K':
-			if(!is_square_attacked(gs, *to, KING * pc, from))
+			if(!is_square_attacked(gs, *to, KING * pc, possible_moves))
 				return ILLEGAL;
 			break;
 		case 'q':
 		case 'Q':
-			if(!is_square_attacked(gs, *to, QUEEN * pc, from))
+			if(!is_square_attacked(gs, *to, QUEEN * pc, possible_moves))
 				return ILLEGAL;
 			break;
 		case 'r':
 		case 'R':
-			if(!is_square_attacked(gs, *to, ROOK * pc, from))
+			if(!is_square_attacked(gs, *to, ROOK * pc, possible_moves))
 				return ILLEGAL;
 			break;
 		default:
 			if(move[1] == 'x'){
-				if(!is_square_attacked(gs, *to, PAWN * pc, from)){
+				if(!is_square_attacked(gs, *to, PAWN * pc, possible_moves)){
 					return ILLEGAL;
 				}
 			}else if(gs->board[to->boardr + (pc * -1)][to->boardc] == PAWN * pc){
@@ -64,7 +66,12 @@ STATUS parse_input(GameState* gs, char* move, SquareCoord* from, SquareCoord* to
 			break;
 
 	}
-	
+	if(possible_moves->size > 0){
+		from->boardr = possible_moves->list[0].boardr;
+		from->boardc = possible_moves->list[0].boardc;	
+	}
+	free(possible_moves);
+
 	return LEGAL;
 }
 
