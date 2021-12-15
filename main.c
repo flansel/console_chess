@@ -54,6 +54,14 @@ STATUS parse_input(GameState* gs, char* move, SquareCoord* from, SquareCoord* to
 				if(!is_square_attacked(gs, *to, PAWN * pc, possible_moves)){
 					return ILLEGAL;
 				}
+				for(i = 0; i < possible_moves->size; i++){
+					if(possible_moves->list[i].boardc + 'a' == move[0]){
+						from->boardr = possible_moves->list[i].boardr;
+						from->boardc = possible_moves->list[i].boardc;
+						free(possible_moves);
+						return LEGAL;
+					}
+				}
 			}else if(gs->board[to->boardr + (pc * -1)][to->boardc] == PAWN * pc){
 				from->boardr = to->boardr+(pc * -1);
 				from->boardc = to->boardc;
@@ -66,9 +74,9 @@ STATUS parse_input(GameState* gs, char* move, SquareCoord* from, SquareCoord* to
 			break;
 
 	}
-	if(possible_moves->size > 0){
+	if(possible_moves->size == 1){
 		from->boardr = possible_moves->list[0].boardr;
-		from->boardc = possible_moves->list[0].boardc;	
+		from->boardc = possible_moves->list[0].boardc;
 	}
 	free(possible_moves);
 
