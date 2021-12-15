@@ -16,6 +16,14 @@ void debug(int n){
 STATUS parse_input(GameState* gs, char* move, SquareCoord* from, SquareCoord* to){
 	int i, len, pc, ret=-1;
 	Move current_move;
+	
+	
+	if(strcmp(move, "resign") == 0){
+		gs->result = gs->turn ? 2 : 1;
+		return -1;
+	}
+	
+	
 	SquareCoordList* possible_moves = (SquareCoordList*)malloc(sizeof(SquareCoordList));
 	possible_moves->size = 0;
 
@@ -61,7 +69,7 @@ STATUS parse_input(GameState* gs, char* move, SquareCoord* from, SquareCoord* to
 					ret = ILLEGAL;
 					break;
 				}
-				for(i = 0; i < possible_moves->size; i++){
+				for(i = 0; i < possible_moves->size; ++i){
 					if(possible_moves->list[i].boardc + 'a' == move[0]){
 						from->boardr = possible_moves->list[i].boardr;
 						from->boardc = possible_moves->list[i].boardc;
@@ -69,7 +77,6 @@ STATUS parse_input(GameState* gs, char* move, SquareCoord* from, SquareCoord* to
 						break;
 					}
 				}
-				ret = ILLEGAL;
 			}else if(gs->board[to->boardr + (pc * -1)][to->boardc] == PAWN * pc){
 				from->boardr = to->boardr + (pc * -1);
 				from->boardc = to->boardc;
@@ -81,9 +88,11 @@ STATUS parse_input(GameState* gs, char* move, SquareCoord* from, SquareCoord* to
 				from->boardr = to->boardr + (pc * -2);
 				from->boardc = to->boardc;
 				ret = LEGAL;
-			}else{
-				ret = ILLEGAL;
 			}
+
+			if(ret == -1)
+				ret = ILLEGAL;
+
 			break;
 	}
 	
@@ -133,19 +142,27 @@ int main(int argc, char** argv){
 
 	GameState* gs = (GameState*)malloc(sizeof(GameState));
 	init_game(gs);
+	system("clear");
 	print_game(gs);
 
 	char current_move[10];
 	char error_msg[30];
 	SquareCoord from,to;
+	int res;
 	//game loop
 
-	while(gs->result == 0){
+	while(1){
 		scanf("%9s", current_move);
-		if(!parse_input(gs, current_move, &from, &to)){
+		
+		res = parse_input(gs, current_move, &from, &to);
+		if(res == 0){
 			wprintf(L"Error: ILLEGAL MOVE fnd, in move parser\n");
 			exit(1);
+		}else if(res == -1){
+			wprintf(L"Player %d has resigned\n", gs->turn ? 1 : 2);
+			exit(1);
 		}
+
 		if(!check_legal(gs, from, to, error_msg)){
 			wprintf(L"Error: ILLEGAL MOVE fnd, in Legality check\n");
 			exit(1);
