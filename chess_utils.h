@@ -56,5 +56,6 @@ int  get_square(GameState*, SquareCoord);
 void update_state(GameState*);
 int in_board(int,int);
 void print_game_state(GameState*);
-
+int check_line(GameState*, SquareCoord, int, int, int, SquareCoord*);
+int check_square(GameState*, int, int, int, SquareCoord*);
 #endif
