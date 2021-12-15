@@ -60,7 +60,7 @@ int main(int argc, char** argv){
 	char error_msg[30];
 	SquareCoord from,to;
 	//game loop
-	
+
 	while(gs->result == 0){
 		scanf("%9s", current_move);
 		parse_input(current_move, &from, &to);
@@ -76,7 +76,7 @@ int main(int argc, char** argv){
 
 	}
 	
-	free(gs);	
+	free(gs);
 	
 	return 0;
 }
