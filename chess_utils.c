@@ -199,7 +199,7 @@ int is_square_attacked(GameState* gs, SquareCoord tg, int pc, SquareCoordList* l
 				found = 1;
 			if(check_line(gs, tg, pc, -1, 0, loco))
 				found = 1;
-			if(ptype == 4)
+			if(ptype == ROOK)
 				break;
 		case BISHOP:
 			if(check_line(gs, tg, pc, 1, 1, loco))
