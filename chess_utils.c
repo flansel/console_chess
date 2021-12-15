@@ -96,11 +96,11 @@ STATUS check_legal(GameState* gs, SquareCoord from, SquareCoord to, char* err){
 	piece = gs->board[from.boardr][from.boardc];
 	//wprintf(L"(%d, %d)=%d -> (%d,%d)\n", from.boardr, from.boardc, piece, to.boardr, to.boardc);
 
-	if(piece == 0 || (piece < 0 && gs->turn) || (piece > 0 && !gs->turn))
+	if(piece == NONE || (piece < 0 && gs->turn) || (piece > 0 && !gs->turn))
 		return ILLEGAL;
 
 	gs->board[to.boardr][to.boardc] = piece;
-	gs->board[from.boardr][from.boardc] = 0;
+	gs->board[from.boardr][from.boardc] = NONE;
 	
 	if(piece == W_KING){
 		gs->wking.boardr = to.boardr;
@@ -140,7 +140,7 @@ int check_line(GameState* gs, SquareCoord st, int pc, int rowf, int colf, Square
 	int row, col, piece;
 	for(row = st.boardr+rowf, col = st.boardc+colf; in_board(row,col); row+=rowf, col+=colf){
 		piece = gs->board[row][col];
-		if(piece != 0 && piece != pc){
+		if(piece != NONE && piece != pc){
 			return 0;
 		}else if(piece == pc){
 			if(loco){
@@ -173,8 +173,7 @@ int is_square_attacked(GameState* gs, SquareCoord tg, int pc, SquareCoordList* l
 	ptype = abs(pc);
 
 	switch(ptype){
-		//check for knights
-		case 2:
+		case KNIGHT:
 			for(i = 0; i < 8; ++i){
 				check_pos.boardc = tg.boardc + knight_offsets[i][0];
 				check_pos.boardr = tg.boardr + knight_offsets[i][1];
@@ -190,8 +189,8 @@ int is_square_attacked(GameState* gs, SquareCoord tg, int pc, SquareCoordList* l
 				}
 			}
 			break;
-		case 4:
-		case 5:
+		case QUEEN:
+		case ROOK:
 			if(check_line(gs, tg, pc, 0, 1, loco))
 				found = 1;
 			if(check_line(gs, tg, pc, 0, -1, loco))
@@ -202,7 +201,7 @@ int is_square_attacked(GameState* gs, SquareCoord tg, int pc, SquareCoordList* l
 				found = 1;
 			if(ptype == 4)
 				break;
-		case 3:
+		case BISHOP:
 			if(check_line(gs, tg, pc, 1, 1, loco))
 				found = 1;
 			else if(check_line(gs, tg, pc, 1, -1, loco))
@@ -212,7 +211,7 @@ int is_square_attacked(GameState* gs, SquareCoord tg, int pc, SquareCoordList* l
 			else if(check_line(gs, tg, pc, -1, -1, loco))
 				found = 1;
 			break;
-		case 6:
+		case KING:
 			row = tg.boardr;
 			col = tg.boardc;
 			if(check_square(gs, row+1, col, pc, loco))
@@ -223,16 +222,16 @@ int is_square_attacked(GameState* gs, SquareCoord tg, int pc, SquareCoordList* l
 				found = 1;
 			if(check_square(gs, row, col-1, pc, loco))
 				found = 1;
-		case 1:
+		case PAWN:
 			row = tg.boardr;
 			col = tg.boardc;
-			if(pc != -1){
+			if(pc != B_PAWN){
 				if(check_square(gs, row-1, col-1, pc, loco))
 					found = 1;
 				if(check_square(gs, row-1, col+1, pc, loco))
 					found = 1;
 			}
-			if(pc != 1){
+			if(pc != W_PAWN){
 				if(check_square(gs, row+1, col-1, pc, loco))
 					found = 1;
 				if(check_square(gs, row+1, col+1, pc, loco))
