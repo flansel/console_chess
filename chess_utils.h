@@ -57,7 +57,7 @@ void init_game(GameState*);
 void print_game(GameState*);
 STATUS check_legal(GameState*, SquareCoord, SquareCoord, char*);
 int is_square_attacked(GameState*, SquareCoord, int, SquareCoordList*);
-int in_check(GameState* gs, char color);
+int in_check(GameState*, char);
 int  set_square(GameState*, SquareCoord, int);
 int  get_square(GameState*, SquareCoord);
 void update_state(GameState*);
@@ -66,5 +66,6 @@ void print_game_state(GameState*);
 int check_line(GameState*, SquareCoord, int, int, int, SquareCoordList*);
 int check_square(GameState*, int, int, int, SquareCoordList*);
 void alg_to_coord(SquareCoord*);
-int is_square_attacked_color(GameState*, SquareCoord, char);
+int is_square_attacked_color(GameState*, SquareCoord, char, SquareCoordList*);
+int in_check_mate(GameState*, char);
 #endif

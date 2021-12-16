@@ -24,8 +24,8 @@ STATUS parse_input(GameState* gs, char* move, SquareCoord* from, SquareCoord* to
 	}
 	
 	
-	SquareCoordList* possible_moves = (SquareCoordList*)malloc(sizeof(SquareCoordList));
-	possible_moves->size = 0;
+	SquareCoordList possible_moves;
+	possible_moves.size = 0;
 
 	len = strlen(move);
 	to->rank = move[len-1];
@@ -40,39 +40,39 @@ STATUS parse_input(GameState* gs, char* move, SquareCoord* from, SquareCoord* to
 	//fall-throughs are used for upper and lower in all cases except Bishop and pawns
 	switch(move[0]){
 		case 'B':
-			if(!is_square_attacked(gs, *to, BISHOP * pc, possible_moves))
+			if(!is_square_attacked(gs, *to, BISHOP * pc, &possible_moves))
 				ret = ILLEGAL;
 			break;
 		case 'n':
 		case 'N':
-			if(!is_square_attacked(gs, *to, KNIGHT * pc, possible_moves))
+			if(!is_square_attacked(gs, *to, KNIGHT * pc, &possible_moves))
 				ret = ILLEGAL;
 			break;
 		case 'k':
 		case 'K':
-			if(!is_square_attacked(gs, *to, KING * pc, possible_moves))
+			if(!is_square_attacked(gs, *to, KING * pc, &possible_moves))
 				ret = ILLEGAL;
 			break;
 		case 'q':
 		case 'Q':
-			if(!is_square_attacked(gs, *to, QUEEN * pc, possible_moves))
+			if(!is_square_attacked(gs, *to, QUEEN * pc, &possible_moves))
 				ret = ILLEGAL;
 			break;
 		case 'r':
 		case 'R':
-			if(!is_square_attacked(gs, *to, ROOK * pc, possible_moves))
+			if(!is_square_attacked(gs, *to, ROOK * pc, &possible_moves))
 				ret = ILLEGAL;
 			break;
 		default:
 			if(move[1] == 'x'){
-				if(!is_square_attacked(gs, *to, PAWN * pc, possible_moves)){
+				if(!is_square_attacked(gs, *to, PAWN * pc, &possible_moves)){
 					ret = ILLEGAL;
 					break;
 				}
-				for(i = 0; i < possible_moves->size; ++i){
-					if(possible_moves->list[i].boardc + 'a' == move[0]){
-						from->boardr = possible_moves->list[i].boardr;
-						from->boardc = possible_moves->list[i].boardc;
+				for(i = 0; i < possible_moves.size; ++i){
+					if(possible_moves.list[i].boardc + 'a' == move[0]){
+						from->boardr = possible_moves.list[i].boardr;
+						from->boardc = possible_moves.list[i].boardc;
 						ret = LEGAL;
 						break;
 					}
@@ -97,30 +97,29 @@ STATUS parse_input(GameState* gs, char* move, SquareCoord* from, SquareCoord* to
 	}
 	
 	if(ret != -1){
-		free(possible_moves);
 		return ret;
 	}
 	
 	//debug(12345);
 
-	if(possible_moves->size == 1 && (len < 4 || move[1] == 'x')){
-		from->boardr = possible_moves->list[0].boardr;
-		from->boardc = possible_moves->list[0].boardc;
+	if(possible_moves.size == 1 && (len < 4 || move[1] == 'x')){
+		from->boardr = possible_moves.list[0].boardr;
+		from->boardc = possible_moves.list[0].boardc;
 		ret = LEGAL;
 	}else if(move[1] > '0' && move[1] < '9'){
-		for(i = 0; i < possible_moves->size; ++i){
-			if(possible_moves->list[i].boardr == (move[1] - '1')){
-				from->boardr = possible_moves->list[i].boardr;
-				from->boardc = possible_moves->list[i].boardc;
+		for(i = 0; i < possible_moves.size; ++i){
+			if(possible_moves.list[i].boardr == (move[1] - '1')){
+				from->boardr = possible_moves.list[i].boardr;
+				from->boardc = possible_moves.list[i].boardc;
 				ret = LEGAL;
 				break;
 			}
 		}
 	}else if(move[1] >= 'a' && move[1] <= 'h'){
-		for(i = 0; i < possible_moves->size; ++i){
-			if(possible_moves->list[i].boardc == (move[1] - 'a')){
-				from->boardr = possible_moves->list[i].boardr;
-				from->boardc = possible_moves->list[i].boardc;
+		for(i = 0; i < possible_moves.size; ++i){
+			if(possible_moves.list[i].boardc == (move[1] - 'a')){
+				from->boardr = possible_moves.list[i].boardr;
+				from->boardc = possible_moves.list[i].boardc;
 				ret = LEGAL;
 				break;
 			}
@@ -130,8 +129,6 @@ STATUS parse_input(GameState* gs, char* move, SquareCoord* from, SquareCoord* to
 	if(ret == -1){
 		ret = ILLEGAL;
 	}
-
-	free(possible_moves);
 
 	return ret;
 }

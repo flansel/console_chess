@@ -125,6 +125,15 @@ int in_board(int row, int col){
 	return 0;
 }
 
+int in_board_val(GameState* gs, int row, int col, int* pv){
+	if(row >= 0 && row < 8 && col >= 0 && col < 8){
+		*pv = gs->board[row][col];
+		return 1;
+	}
+	*pv = -100;
+	return 0;
+}
+
 /*
  * GameState, targeted square, piece type to check for, color that is attacking, optional loco
  * that is filled with the position of the attacking piece
@@ -266,7 +275,46 @@ int in_check(GameState* gs, char color){
 	return 0;
 }
 
-int is_square_attacked_color(GameState* gs, SquareCoord tg, char color){
+int in_check_mate(GameState* gs, char color){
+	SquareCoord kpos = color ? gs->wking : gs->bking;
+	SquareCoord tg;
+	SquareCoordList to_check;
+	SquareCoordList checking_p;
+	int pv, i, j;
+
+	if(!in_check(gs, color))
+		return 0;
+	
+	//look at squares surronding king
+	for(i = -1; i < 2; ++i){
+		for(j = -1; j < 2; ++j){
+			if(i == 0 && j == 0)
+				continue;
+
+			tg.boardr = kpos.boardr + i;
+			tg.boardc = kpos.boardc + j;
+
+			if(in_board_val(gs, tg.boardr, tg.boardc, &pv) && pv == 0){
+				if(is_square_attacked_color(gs, tg, !color, &checking_p))
+					to_check.list[to_check.size] = tg;
+				else
+					return 0;
+				
+			}
+		}
+	}
+	
+	//King must move on a double check, if king could move fn would have already returned 0
+	if(checking_p.size > 1)
+		return 1;
+
+
+
+	return 1;
+
+}
+
+int is_square_attacked_color(GameState* gs, SquareCoord tg, char color, SquareCoordList* loco){
 	int i,pc;
 	if(color == WHITE)
 		pc = 1;
@@ -274,7 +322,7 @@ int is_square_attacked_color(GameState* gs, SquareCoord tg, char color){
 		pc = -1;
 
 	for(i = 1; i < 7; ++i){
-		if(is_square_attacked(gs, tg, i*pc, NULL))
+		if(is_square_attacked(gs, tg, i*pc, loco))
 			return 1;
 	}
 
